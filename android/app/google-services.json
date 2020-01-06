@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "894744082419",
+    "firebase_url": "https://plantground-d5263.firebaseio.com",
+    "project_id": "plantground-d5263",
+    "storage_bucket": "plantground-d5263.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:894744082419:android:1d3b0d4eede69b3959c486",
+        "android_client_info": {
+          "package_name": "dev.paulomec.plantground"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "894744082419-1bsgqu6dpp2003967houdcd8f62pvtp3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dev.paulomec.plantground",
+            "certificate_hash": "9581383cde566ad4d4f20c1a9fdb2a7b1250b77e"
+          }
+        },
+        {
+          "client_id": "894744082419-5qjls2d3ktdt4n9sd9cqjsgbaihb0mlt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDD_d7irAmTDaE9C_q8k0MN45XVX0CQ2PA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "894744082419-5qjls2d3ktdt4n9sd9cqjsgbaihb0mlt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
