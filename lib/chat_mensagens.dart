@@ -58,11 +58,12 @@ _handleSubmitted(String text) async {
 void _sendMessage({String text, String imgUrl}) {
   Firestore.instance.collection("nummensagens").getDocuments () 
       .then ((QuerySnapshot snapshot) { 
-    snapshot. documents .forEach ((f){Firestore.instance.collection("mensagens").document(f.data["numero"].toString()).setData({
+    snapshot. documents .forEach ((f){Firestore.instance.collection("mensagens").document(f.data["numero"]).setData({
       "text": text,
       "imgUrl": imgUrl,
       "senderName": _currentUser.displayName,
-      "senderPhotoUrl": _currentUser.photoUrl
+      "senderPhotoUrl": _currentUser.photoUrl,
+      "nummensagem" : f.data["numero"]
     });
     Firestore.instance.collection("nummensagens").document("nummensagens").updateData({"numero":(f.data["numero"]+1)});
     });
