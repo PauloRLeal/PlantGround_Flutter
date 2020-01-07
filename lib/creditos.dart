@@ -68,11 +68,35 @@ class ButtonsClassificacao extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 50.0, horizontal: 20.0),
-      child: Text(
-      data["nome"],
+        child: Column(children: <Widget>[
+      Container(
+          child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 50.0, horizontal: 10.0),
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(data["img"]),
+                minRadius: 75.0,
+              ),
+            ),
+          ],
+        ),
+      ),
+      Container(
+        margin: EdgeInsets.only(top: 30.0),
+        child: Text(
+      data["text"],
       textAlign: TextAlign.center,
       style: TextStyle(fontSize: 24.0, color: Colors.black),
-    ));
+    )),
+    Padding(
+      padding: EdgeInsets.only(bottom: 50.0),
+    ),
+    Divider(
+        height: 1.0,
+      ),
+    ]));
   }
 }

@@ -34,10 +34,12 @@ Future<Null> _ensureLoggedIn() async {
   _currentUser = user;
   if (user == null){
     user = await googleSignIn.signInSilently();
+    _currentUser = user;
   }
 
   if (user == null){
     user = await googleSignIn.signIn();
+    _currentUser = user;
   }
   
   if (await auth.currentUser() == null){
@@ -52,13 +54,19 @@ _handleSubmitted(String text) async {
   _sendMessage(text: text);
 }
 
+
 void _sendMessage({String text, String imgUrl}) {
-  Firestore.instance.collection("mensagens").add({
-    "text": text,
-    "imgUrl": imgUrl,
-    "senderName": _currentUser.toString(),
-    "senderPhotoUrl": "googleSignIn.currentUser.photoUrl"
-  });
+  Firestore.instance.collection("nummensagens").getDocuments () 
+      .then ((QuerySnapshot snapshot) { 
+    snapshot. documents .forEach ((f){Firestore.instance.collection("mensagens").document(f.data["numero"].toString()).setData({
+      "text": text,
+      "imgUrl": imgUrl,
+      "senderName": _currentUser.displayName,
+      "senderPhotoUrl": _currentUser.photoUrl
+    });
+    Firestore.instance.collection("nummensagens").document("nummensagens").updateData({"numero":(f.data["numero"]+1)});
+    });
+  }); 
 }
 
 class ChatMensagem extends StatefulWidget {

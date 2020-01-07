@@ -25,6 +25,7 @@ class _Receita extends State<Receita> {
       top: false,
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.greenAccent,
           title: Text(idCarac2),
           centerTitle: true,
           elevation:
@@ -73,11 +74,27 @@ class TextCaracteristicasGerais extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Column(children: <Widget>[Container(
+          child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 50.0, horizontal: 10.0),
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(data["img$idCarac3"]),
+                minRadius: 150.0,
+              ),
+            ),
+          ],
+        ),
+      ),
+      Container(
+        margin: EdgeInsets.symmetric(horizontal: 15.0),
         child: Text(
       data["text$idCarac3"],
       textAlign: TextAlign.center,
       style: TextStyle(fontSize: 24.0, color: Colors.black),
-    ));
+    ))],);
   }
 }

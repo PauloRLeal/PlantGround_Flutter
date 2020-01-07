@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "894744082419-1bsgqu6dpp2003967houdcd8f62pvtp3.apps.googleusercontent.com",
+          "client_id": "894744082419-h9ugfig4klcci6q76s14a8k9nso20lt5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "dev.paulomec.plantground",
-            "certificate_hash": "9581383cde566ad4d4f20c1a9fdb2a7b1250b77e"
+            "certificate_hash": "ff3a1826a0e5d2f069f0c392abd74b289d6c2919"
           }
         },
         {

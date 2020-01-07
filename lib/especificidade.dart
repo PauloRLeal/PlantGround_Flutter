@@ -1,6 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:plantground/receitas_possiveis.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -13,7 +12,8 @@ class Especificidade extends StatefulWidget {
   final idCarac;
   Especificidade(this.idCarac);
   @override
-  _EspecificidadeState createState() => _EspecificidadeState(idCarac);
+  _EspecificidadeState createState() =>
+      _EspecificidadeState(idCarac);
 }
 
 class _EspecificidadeState extends State<Especificidade> {
@@ -27,70 +27,41 @@ class _EspecificidadeState extends State<Especificidade> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.greenAccent,
-          title: Text(idCarac2, style: TextStyle(color: Colors.white)),
+          title: Text(idCarac2),
           centerTitle: true,
           elevation:
               Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
         ),
         body: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                child: StreamBuilder(
-                    stream: Firestore.instance
-                        .collection("especificidade")
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.none:
-                        case ConnectionState.waiting:
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        default:
-                          return ListView.builder(
-                            itemCount: snapshot.data.documents.length,
-                            itemBuilder: (context, index) {
-                              Widget a;
-                              snapshot.data.documents[index]
-                                          .data["nome$idCarac2"] !=
-                                      null
-                                  ? a = TextReceitas(
-                                      snapshot.data.documents[index].data,
-                                      idCarac2)
-                                  : a = null;
-                              return a;
-                            },
-                          );
-                      }
-                    }),
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              child: StreamBuilder(
+                stream: Firestore.instance
+                    .collection("especificidade")
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.none:
+                    case ConnectionState.waiting:
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    default:
+                      return ListView.builder(
+                        itemCount: snapshot.data.documents.length,
+                        itemBuilder: (context, index) {
+                          return snapshot.data.documents[index].data["img$idCarac2"] != null ?
+                          TextEspecificidade(
+                              snapshot.data.documents[index].data, idCarac2) : Text("");
+                        },
+                      );
+                  }
+                },
               ),
-              Container(
-                color: Colors.greenAccent,
-                margin: EdgeInsets.only(top: 20.0, bottom: 10.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Expanded(
-                        child: FlatButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          PossiveisReceitas(idCarac2)));
-                            },
-                            child: Text(
-                              "Receitas",
-                              style: TextStyle(
-                                  fontSize: 24.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
-                            )),
-                      ),
-                    ]),
-              )
-            ]),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -105,12 +76,30 @@ class TextEspecificidade extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin:
-            EdgeInsets.only(top: 100.0, bottom: 50.0, left: 20.0, right: 20.0),
+        child: Column(children: <Widget>[
+      Container(
+          child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 50.0, horizontal: 10.0),
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(data["img$idCarac3"]),
+                minRadius: 150.0,
+              ),
+            ),
+          ],
+        ),
+      ),
+      Container(
+        margin: EdgeInsets.symmetric(horizontal: 15.0),
         child: Text(
-          data["nome$idCarac3"],
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 24.0, color: Colors.black),
-        ));
+      data["text$idCarac3"],
+      textAlign: TextAlign.center,
+      style: TextStyle(fontSize: 24.0, color: Colors.black),
+    ))
+    ]));
   }
 }
+
