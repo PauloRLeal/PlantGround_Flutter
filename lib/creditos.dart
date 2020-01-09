@@ -45,8 +45,16 @@ class _CreditosState extends State<Creditos> {
                       return ListView.builder(
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (context, index) {
-                          return ButtonsClassificacao(
-                              snapshot.data.documents[index].data);
+                          if (snapshot.data.documents[index].data != null) {
+                            return ButtonsClassificacao(
+                                snapshot.data.documents[index].data);
+                          } else {
+                            return Container(
+                                margin: EdgeInsets.only(top: 250.0),
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ));
+                          }
                         },
                       );
                   }
@@ -70,12 +78,13 @@ class ButtonsClassificacao extends StatelessWidget {
     return Container(
         child: Column(children: <Widget>[
       Container(
-          child: Row(
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
-              margin: const EdgeInsets.symmetric(vertical: 50.0, horizontal: 10.0),
+              margin:
+                  const EdgeInsets.symmetric(vertical: 50.0, horizontal: 10.0),
               child: CircleAvatar(
                 backgroundImage: NetworkImage(data["img"]),
                 minRadius: 75.0,
@@ -85,16 +94,16 @@ class ButtonsClassificacao extends StatelessWidget {
         ),
       ),
       Container(
-        margin: EdgeInsets.only(top: 30.0),
-        child: Text(
-      data["text"],
-      textAlign: TextAlign.center,
-      style: TextStyle(fontSize: 24.0, color: Colors.black),
-    )),
-    Padding(
-      padding: EdgeInsets.only(bottom: 50.0),
-    ),
-    Divider(
+          margin: EdgeInsets.only(top: 30.0),
+          child: Text(
+            data["text"],
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 24.0, color: Colors.black),
+          )),
+      Padding(
+        padding: EdgeInsets.only(bottom: 50.0),
+      ),
+      Divider(
         height: 1.0,
       ),
     ]));

@@ -50,11 +50,16 @@ class _PossiveisReceitas extends State<PossiveisReceitas> {
                       return ListView.builder(
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (context, index) {
-                          Widget a;
-                          snapshot.data.documents[index].data["nome$idCarac2"] != null ?
-                           a = TextReceitas(
-                              snapshot.data.documents[index].data, idCarac2) : a = null;
-                          return a;
+                          if (snapshot.data.documents[index].data != null) {
+                            return TextReceitasPossiveis(
+                                snapshot.data.documents[index].data, idCarac2);
+                          } else {
+                            return Container(
+                                margin: EdgeInsets.only(top: 250.0),
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ));
+                          }
                         },
                       );
                   }
@@ -68,11 +73,11 @@ class _PossiveisReceitas extends State<PossiveisReceitas> {
   }
 }
 
-class TextReceitas extends StatelessWidget {
+class TextReceitasPossiveis extends StatelessWidget {
   final Map<String, dynamic> data;
   final idCarac3;
 
-  TextReceitas(this.data, this.idCarac3);
+  TextReceitasPossiveis(this.data, this.idCarac3);
 
   @override
   Widget build(BuildContext context) {

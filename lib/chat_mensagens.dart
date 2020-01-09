@@ -1,12 +1,11 @@
 import 'dart:io' as io;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -15,64 +14,45 @@ void main() {
   ));
 }
 
-final ThemeData kIOSTheme = ThemeData(
-    primarySwatch: Colors.orange,
-    primaryColor: Colors.grey[100],
-    primaryColorBrightness: Brightness.light);
+var _userId;
+var _userName;
+var _userPhotoUrl;
 
-final ThemeData kDefaultTheme = ThemeData(
-  primarySwatch: Colors.purple,
-  accentColor: Colors.orangeAccent[400],
-);
+_getDadosUser() async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  _userId = prefs.getString('userId');
+  _userName = prefs.getString('displayName');
+  _userPhotoUrl = prefs.getString('photoUrl');
 
-final googleSignIn = GoogleSignIn();
-final auth = FirebaseAuth.instance;
-var _currentUser;
-
-Future<Null> _ensureLoggedIn() async {
-  GoogleSignInAccount user = googleSignIn.currentUser;
-  _currentUser = user;
-  if (user == null){
-    user = await googleSignIn.signInSilently();
-    _currentUser = user;
-  }
-
-  if (user == null){
-    user = await googleSignIn.signIn();
-    _currentUser = user;
-  }
-  
-  if (await auth.currentUser() == null){
-    GoogleSignInAuthentication credentials = await googleSignIn.currentUser.authentication;
-    await auth.signInWithCredential(GoogleAuthProvider.getCredential(
-        idToken: credentials.idToken, accessToken: credentials.accessToken));
-  }
 }
-
-_handleSubmitted(String text) async {
-  await _ensureLoggedIn();
-  _sendMessage(text: text);
-}
-
 
 void _sendMessage({String text, String imgUrl}) {
-  Firestore.instance.collection("nummensagens").getDocuments () 
-      .then ((QuerySnapshot snapshot) { 
-    snapshot. documents .forEach ((f){Firestore.instance.collection("mensagens").document(f.data["numero"]).setData({
-      "text": text,
-      "imgUrl": imgUrl,
-      "senderName": _currentUser.displayName,
-      "senderPhotoUrl": _currentUser.photoUrl,
-      "nummensagem" : f.data["numero"]
+  Firestore.instance
+      .collection("nummensagens")
+      .getDocuments()
+      .then((QuerySnapshot snapshot) {
+    snapshot.documents.forEach((f) {
+      Firestore.instance
+          .collection("mensagens")
+          .document(f.data["numero"].toString())
+          .setData({
+        "text": text,
+        "imgUrl": imgUrl,
+        "senderName": _userName,
+        "senderPhotoUrl": _userPhotoUrl,
+        "senderId": _userId,
+        "idmensagem": f.data["numero"]
+      });
+      Firestore.instance
+          .collection("nummensagens")
+          .document("nummensagens")
+          .updateData({"numero": (f.data["numero"] + 1)});
     });
-    Firestore.instance.collection("nummensagens").document("nummensagens").updateData({"numero":(f.data["numero"]+1)});
-    });
-  }); 
+  });
 }
 
 class ChatMensagem extends StatefulWidget {
   ChatMensagem({Key key}) : super(key: key);
-
   @override
   _ChatMensagemState createState() => _ChatMensagemState();
 }
@@ -80,6 +60,7 @@ class ChatMensagem extends StatefulWidget {
 class _ChatMensagemState extends State<ChatMensagem> {
   @override
   Widget build(BuildContext context) {
+    _getDadosUser();
     return Container(
         child: SafeArea(
             bottom: false,
@@ -112,8 +93,19 @@ class _ChatMensagemState extends State<ChatMensagem> {
                                 reverse: true,
                                 itemCount: snapshot.data.documents.length,
                                 itemBuilder: (context, index) {
-                                  List r = snapshot.data.documents.reversed.toList();
-                                  return Message(r[index].data);
+                                  if (snapshot.data.documents[index].data !=
+                                      null) {
+                                    List r = snapshot.data.documents.reversed
+                                        .toList();
+                                    if (r[index].data["senderId"] == _userId){
+                                      return MessageUser(r[index].data);
+                                    }
+                                    else{
+                                      return Message(r[index].data);
+                                    }
+                                  } else {
+                                    return CircularProgressIndicator();
+                                  }
                                 },
                               );
                           }
@@ -166,17 +158,19 @@ class _TextComposerState extends State<TextComposer> {
           children: <Widget>[
             Container(
               child: IconButton(
-                icon: Icon(Icons.photo_camera),
-                onPressed: () async {
-                  await _ensureLoggedIn();
-                  io.File imgFile = await ImagePicker.pickImage(source: ImageSource.camera);
-                  if (imgFile == null) return;
-                  StorageUploadTask task = FirebaseStorage.instance.ref().
-                    child(googleSignIn.currentUser.id.toString() +
-                      DateTime.now().millisecondsSinceEpoch.toString()).putFile(imgFile);
-                  StorageTaskSnapshot snap = await task.onComplete;
-                        _sendMessage(imgUrl: await snap.ref.getDownloadURL());
-                      }),
+                  icon: Icon(Icons.photo_camera),
+                  onPressed: () async {
+                    io.File imgFile =
+                        await ImagePicker.pickImage(source: ImageSource.camera);
+                    if (imgFile == null) return;
+                    StorageUploadTask task = FirebaseStorage.instance
+                        .ref()
+                        .child(_userId +
+                            DateTime.now().millisecondsSinceEpoch.toString())
+                        .putFile(imgFile);
+                    StorageTaskSnapshot snap = await task.onComplete;
+                    _sendMessage(imgUrl: await snap.ref.getDownloadURL());
+                  }),
             ),
             Expanded(
               child: TextField(
@@ -189,7 +183,7 @@ class _TextComposerState extends State<TextComposer> {
                     });
                   },
                   onSubmitted: (text) {
-                    _handleSubmitted(_textController.text);
+                    _sendMessage(text: _textController.text);
                     _reset();
                   }),
             ),
@@ -200,7 +194,7 @@ class _TextComposerState extends State<TextComposer> {
                         child: Text("Enviar"),
                         onPressed: _isComposing
                             ? () {
-                                _handleSubmitted(_textController.text);
+                                _sendMessage(text: _textController.text);
                                 _reset();
                               }
                             : null,
@@ -209,7 +203,7 @@ class _TextComposerState extends State<TextComposer> {
                         icon: Icon(Icons.send),
                         onPressed: _isComposing
                             ? () {
-                                _handleSubmitted(_textController.text);
+                                _sendMessage(text: _textController.text);
                                 _reset();
                               }
                             : null,
@@ -258,5 +252,44 @@ class Message extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class MessageUser extends StatelessWidget {
+  final Map<String, dynamic> data;
+
+  MessageUser(this.data);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: Container(
+      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Text(data["senderName"],
+                    style: Theme.of(context).textTheme.subhead),
+                Container(
+                    margin: const EdgeInsets.only(top: 5.0),
+                    child: data["imgUrl"] != null
+                        ? Image.network(data["imgUrl"], width: 250.0)
+                        : Text(data["text"]))
+              ],
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(left: 16.0),
+            child: CircleAvatar(
+              backgroundImage: NetworkImage(data["senderPhotoUrl"]),
+            ),
+          ),
+        ],
+      ),
+    ));
   }
 }

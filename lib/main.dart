@@ -1,124 +1,91 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:plantground/chat_mensagens.dart';
-import 'package:plantground/creditos.dart';
-import 'package:plantground/topicos.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:plantground/menu_inicial.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MaterialApp(
-    title: 'PlantGround',
+    title: "Login",
     debugShowCheckedModeBanner: false,
-    home: MenuInicial(),
+    home: Login(),
   ));
 }
 
-class MenuInicial extends StatefulWidget {
-  @override
-  _MenuInicialState createState() => _MenuInicialState();
+final googleSignIn = GoogleSignIn();
+final auth = FirebaseAuth.instance;
+var _currentUser;
+
+Future<Null> _ensureLoggedIn() async {
+  GoogleSignInAccount user = googleSignIn.currentUser;
+  _currentUser = user;
+  if (user == null) {
+    user = await googleSignIn.signInSilently();
+    _currentUser = user;
+  }
+  if (user == null) {
+    user = await googleSignIn.signIn();
+    _currentUser = user;
+  }
+
+  if (await auth.currentUser() == null) {
+    GoogleSignInAuthentication credentials =
+        await googleSignIn.currentUser.authentication;
+    await auth.signInWithCredential(GoogleAuthProvider.getCredential(
+        idToken: credentials.idToken, accessToken: credentials.accessToken));
+  }
 }
 
-class _MenuInicialState extends State<MenuInicial> {
+class Login extends StatefulWidget {
+  @override
+  _LoginState createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      bottom: false,
-      top: false,
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.greenAccent,
-          title: Text("PlantGround"),
-          centerTitle: true,
-          elevation:
-              Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
-        ),
-        body: Column(
+    return Scaffold(
+      body: Container(
+        color: Colors.white,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              FlutterLogo(size: 150),
+              SizedBox(height: 50),
+              OutlineButton(
+      splashColor: Colors.grey,
+      onPressed: () async {
+        await _ensureLoggedIn();
+        _salvarDadosUser();
+        Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => MenuInicial()));
+      },
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+      highlightElevation: 0,
+      borderSide: BorderSide(color: Colors.grey),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Expanded(
-              child: StreamBuilder(
-                stream:
-                    Firestore.instance.collection("classificacao").snapshots(),
-                builder: (context, snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.none:
-                    case ConnectionState.waiting:
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    default:
-                      return ListView.builder(
-                        itemCount: snapshot.data.documents.length,
-                        itemBuilder: (context, index) {
-                          return ButtonsClassificacao(
-                              snapshot.data.documents[index].data);
-                        },
-                      );
-                  }
-                },
+            Image(image: AssetImage("assets/google_logo.png"), height: 35.0),
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text(
+                'Sign in with Google',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.grey,
+                ),
               ),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 10.0),
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-              ),
-              child: IconsComposer(),
             )
           ],
         ),
       ),
-    );
-  }
-}
-
-class IconsComposer extends StatefulWidget {
-  IconsComposer({Key key}) : super(key: key);
-
-  @override
-  _IconsComposerState createState() => _IconsComposerState();
-}
-
-class _IconsComposerState extends State<IconsComposer> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: IconTheme(
-        data: IconThemeData(color: Theme.of(context).accentColor),
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 10.0),
-          decoration: Theme.of(context).platform == TargetPlatform.iOS
-              ? BoxDecoration(
-                  border: Border(top: BorderSide(color: Colors.grey[200])))
-              : null,
-          child: Row(
-            children: <Widget>[
-              Container(
-                child: IconButton(
-                  icon: Icon(
-                    Icons.info,
-                    color: Colors.greenAccent,
-                    size: 30.0,
-                  ),
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Creditos()));
-                  },
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 120.0),
-              ),
-              Container(
-                child: IconButton(
-                  icon: Icon(Icons.chat, color: Colors.greenAccent, size: 30.0),
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ChatMensagem()));
-                  },
-                ),
-              )
+    )
             ],
           ),
         ),
@@ -126,40 +93,13 @@ class _IconsComposerState extends State<IconsComposer> {
     );
   }
 }
-
-class ButtonsClassificacao extends StatelessWidget {
-  final Map<String, dynamic> data;
-
-  ButtonsClassificacao(this.data);
-
-  @override
-  Widget build(BuildContext context) {
-    void onPress(String id) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Topicos(id)));
-    }
-
-    return Container(
-      margin: const EdgeInsets.only(top: 60.0, left: 7.5, right: 7.5),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                FlatButton(
-                    onPressed: () => onPress(data["nome"]),
-                    child: Text(
-                      data["nome"],
-                      style: TextStyle(
-                          fontSize: 24.0, fontWeight: FontWeight.bold),
-                    )),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
+_salvarDadosUser() async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  print(_currentUser.id);
+  await prefs.setString('userId', _currentUser.id);
+  print(_currentUser.displayName);
+  await prefs.setString('displayName', _currentUser.displayName);
+  print(_currentUser.photoUrl);
+  await prefs.setString('photoUrl', _currentUser.photoUrl);
+  
 }

@@ -48,11 +48,9 @@ class _Receita extends State<Receita> {
                       return ListView.builder(
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (context, index) {
-                          Widget a;
-                          snapshot.data.documents[index].data["text$idCarac2"] != null ?
-                           a = TextCaracteristicasGerais(
-                              snapshot.data.documents[index].data, idCarac2) : a = null;
-                          return a;
+                          return snapshot.data.documents[index].data["text$idCarac2"] != null ?
+                          TextReceita(
+                              snapshot.data.documents[index].data, idCarac2) : Text("");
                         },
                       );
                   }
@@ -66,11 +64,11 @@ class _Receita extends State<Receita> {
   }
 }
 
-class TextCaracteristicasGerais extends StatelessWidget {
+class TextReceita extends StatelessWidget {
   final Map<String, dynamic> data;
   final idCarac3;
 
-  TextCaracteristicasGerais(this.data, this.idCarac3);
+  TextReceita(this.data, this.idCarac3);
 
   @override
   Widget build(BuildContext context) {

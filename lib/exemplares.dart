@@ -49,7 +49,7 @@ class _Exemplares extends State<Exemplares> {
                       return ListView.builder(
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (context, index) {
-                          return TextCaracteristicasGerais(
+                          return TextCaracteristicas(
                               snapshot.data.documents[index].data, idCarac2);
                         },
                       );
@@ -64,11 +64,11 @@ class _Exemplares extends State<Exemplares> {
   }
 }
 
-class TextCaracteristicasGerais extends StatelessWidget {
+class TextCaracteristicas extends StatelessWidget {
   final Map<String, dynamic> data;
   final idCarac3;
 
-  TextCaracteristicasGerais(this.data, this.idCarac3);
+  TextCaracteristicas(this.data, this.idCarac3);
 
   @override
   Widget build(BuildContext context) {

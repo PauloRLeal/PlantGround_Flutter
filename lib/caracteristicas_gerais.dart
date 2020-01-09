@@ -51,8 +51,17 @@ class _CaracteristicasGeraisState extends State<CaracteristicasGerais> {
                       return ListView.builder(
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (context, index) {
-                          return TextCaracteristicasGerais(
-                              snapshot.data.documents[index].data, idCarac2);
+                          if (snapshot.data.documents[index].data["text$idCarac2"] != null) {
+                            return TextCaracteristicasGerais(
+                                snapshot.data.documents[index].data, idCarac2);
+                          } else {
+                            return Container(
+                              margin: EdgeInsets.only(top: 250.0),
+                              child: Center(
+                        child: CircularProgressIndicator(),
+                      )
+                      );
+                          }
                         },
                       );
                   }
@@ -77,12 +86,13 @@ class TextCaracteristicasGerais extends StatelessWidget {
     return Container(
         child: Column(children: <Widget>[
       Container(
-          child: Row(
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
-              margin: const EdgeInsets.symmetric(vertical: 50.0, horizontal: 10.0),
+              margin:
+                  const EdgeInsets.symmetric(vertical: 50.0, horizontal: 10.0),
               child: CircleAvatar(
                 backgroundImage: NetworkImage(data["img$idCarac3"]),
                 minRadius: 150.0,
@@ -92,18 +102,12 @@ class TextCaracteristicasGerais extends StatelessWidget {
         ),
       ),
       Container(
-        margin: EdgeInsets.symmetric(horizontal: 15.0),
-        child: Text(
-      data["text$idCarac3"],
-      textAlign: TextAlign.center,
-      style: TextStyle(fontSize: 24.0, color: Colors.black),
-    ))
+          margin: EdgeInsets.symmetric(horizontal: 15.0),
+          child: Text(
+            data["text$idCarac3"],
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 24.0, color: Colors.black),
+          ))
     ]));
-    /*Container(
-        child: Text(
-      data[idCarac3],
-      textAlign: TextAlign.center,
-      style: TextStyle(fontSize: 24.0, color: Colors.black),
-    ));*/
   }
 }
