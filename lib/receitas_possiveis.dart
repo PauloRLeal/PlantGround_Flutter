@@ -26,7 +26,12 @@ class _PossiveisReceitas extends State<PossiveisReceitas> {
       top: false,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(idCarac2),
+          title: Text(
+          idCarac2,
+          style: TextStyle(
+              fontSize: 24.0,
+              color: Colors.white),
+        ),
           centerTitle: true,
           elevation:
               Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
@@ -50,16 +55,16 @@ class _PossiveisReceitas extends State<PossiveisReceitas> {
                       return ListView.builder(
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (context, index) {
-                          if (snapshot.data.documents[index].data != null) {
-                            return TextReceitasPossiveis(
-                                snapshot.data.documents[index].data, idCarac2);
-                          } else {
-                            return Container(
-                                margin: EdgeInsets.only(top: 250.0),
-                                child: Center(
-                                  child: CircularProgressIndicator(),
-                                ));
-                          }
+                          if(snapshot.hasData){
+                            if(snapshot.data != null){
+                              return TextReceitasPossiveis(
+                              snapshot.data.documents[index].data, idCarac2);
+                            }else{
+                              return Center(child: CircularProgressIndicator());
+                            }
+                          }else{
+                              return Center(child: CircularProgressIndicator());
+                            }
                         },
                       );
                   }

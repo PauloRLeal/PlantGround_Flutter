@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:plantground/drawer.dart';
 import 'package:plantground/menu_inicial.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,7 +17,7 @@ final googleSignIn = GoogleSignIn();
 final auth = FirebaseAuth.instance;
 var _currentUser;
 
-Future<Null> _ensureLoggedIn() async {
+Future<GoogleSignInAccount> _ensureLoggedIn() async {
   GoogleSignInAccount user = googleSignIn.currentUser;
   _currentUser = user;
   if (user == null) {
@@ -34,6 +35,7 @@ Future<Null> _ensureLoggedIn() async {
     await auth.signInWithCredential(GoogleAuthProvider.getCredential(
         idToken: credentials.idToken, accessToken: credentials.accessToken));
   }
+  return _currentUser;
 }
 
 class Login extends StatefulWidget {
@@ -42,10 +44,31 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+
+  bool _loading;
+
+@override
+  void initState() {
+    super.initState();
+    _loading = true;
+    _ensureLoggedIn().then((user){
+      if(user != null){
+        _loading = false;
+        _salvarDadosUser();
+        getDadosUser();
+         Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => MenuInicial()));
+      }
+    });
+  }
+
+  
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body:_loading ? Center(child: CircularProgressIndicator(),) : Container(
         color: Colors.white,
         child: Center(
           child: Column(
@@ -95,11 +118,9 @@ class _LoginState extends State<Login> {
 }
 _salvarDadosUser() async{
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  print(_currentUser.id);
   await prefs.setString('userId', _currentUser.id);
-  print(_currentUser.displayName);
   await prefs.setString('displayName', _currentUser.displayName);
-  print(_currentUser.photoUrl);
   await prefs.setString('photoUrl', _currentUser.photoUrl);
+  await prefs.setString('userEmail', _currentUser.email);
   
 }

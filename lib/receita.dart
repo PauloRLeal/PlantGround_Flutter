@@ -26,7 +26,12 @@ class _Receita extends State<Receita> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.greenAccent,
-          title: Text(idCarac2),
+          title: Text(
+          idCarac2,
+          style: TextStyle(
+              fontSize: 24.0,
+              color: Colors.white),
+        ),
           centerTitle: true,
           elevation:
               Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
@@ -48,9 +53,16 @@ class _Receita extends State<Receita> {
                       return ListView.builder(
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (context, index) {
-                          return snapshot.data.documents[index].data["text$idCarac2"] != null ?
-                          TextReceita(
-                              snapshot.data.documents[index].data, idCarac2) : Text("");
+                          if(snapshot.hasData){
+                            if(snapshot.data != null){
+                              return TextReceita(
+                              snapshot.data.documents[index].data, idCarac2);
+                            }else{
+                              return Center(child: CircularProgressIndicator());
+                            }
+                          }else{
+                              return Center(child: CircularProgressIndicator());
+                            }
                         },
                       );
                   }

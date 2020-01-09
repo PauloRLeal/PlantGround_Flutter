@@ -27,7 +27,12 @@ class _CaracteristicasGeraisState extends State<CaracteristicasGerais> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.greenAccent,
-          title: Text(idCarac2),
+          title: Text(
+          idCarac2,
+          style: TextStyle(
+              fontSize: 24.0,
+              color: Colors.white),
+        ),
           centerTitle: true,
           elevation:
               Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
@@ -51,17 +56,16 @@ class _CaracteristicasGeraisState extends State<CaracteristicasGerais> {
                       return ListView.builder(
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (context, index) {
-                          if (snapshot.data.documents[index].data["text$idCarac2"] != null) {
-                            return TextCaracteristicasGerais(
-                                snapshot.data.documents[index].data, idCarac2);
-                          } else {
-                            return Container(
-                              margin: EdgeInsets.only(top: 250.0),
-                              child: Center(
-                        child: CircularProgressIndicator(),
-                      )
-                      );
-                          }
+                          if(snapshot.hasData){
+                            if(snapshot.data != null){
+                              return TextCaracteristicasGerais(
+                              snapshot.data.documents[index].data, idCarac2);
+                            }else{
+                              return Center(child: CircularProgressIndicator());
+                            }
+                          }else{
+                              return Center(child: CircularProgressIndicator());
+                            }
                         },
                       );
                   }

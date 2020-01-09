@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:plantground/chat_mensagens.dart';
-import 'package:plantground/creditos.dart';
+import 'package:plantground/drawer.dart';
 import 'package:plantground/topicos.dart';
 
 void main() {
   runApp(MaterialApp(
-    title: 'PlantGround',
+    title: "PlantGround",
     debugShowCheckedModeBanner: false,
     home: MenuInicial(),
   ));
@@ -20,13 +19,19 @@ class MenuInicial extends StatefulWidget {
 class _MenuInicialState extends State<MenuInicial> {
   @override
   Widget build(BuildContext context) {
+    getDadosUser();
     return SafeArea(
       bottom: false,
       top: false,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.greenAccent,
-          title: Text("PlantGround"),
+          title: Text(
+          "PlantGround",
+          style: TextStyle(
+              fontSize: 24.0,
+              color: Colors.white),
+        ),
           centerTitle: true,
           elevation:
               Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
@@ -49,83 +54,25 @@ class _MenuInicialState extends State<MenuInicial> {
                       return ListView.builder(
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (context, index) {
-                          if (snapshot.data.documents[index].data != null){
-                            return Classificacao(snapshot.data.documents[index].data);
-                          }
-                          else{
-                            return CircularProgressIndicator();
-                          }
+                          if(snapshot.hasData){
+                            if(snapshot.data != null){
+                              return Classificacao(
+                              snapshot.data.documents[index].data);
+                            }else{
+                              return Center(child: CircularProgressIndicator());
+                            }
+                          }else{
+                              return Center(child: CircularProgressIndicator());
+                            }
                         },
                       );
                   }
                 },
               ),
             ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 10.0),
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-              ),
-              child: IconsComposer(),
-            )
           ],
         ),
-      ),
-    );
-  }
-}
-
-class IconsComposer extends StatefulWidget {
-  IconsComposer({Key key}) : super(key: key);
-
-  @override
-  _IconsComposerState createState() => _IconsComposerState();
-}
-
-class _IconsComposerState extends State<IconsComposer> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: IconTheme(
-        data: IconThemeData(color: Theme.of(context).accentColor),
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 10.0),
-          decoration: Theme.of(context).platform == TargetPlatform.iOS
-              ? BoxDecoration(
-                  border: Border(top: BorderSide(color: Colors.grey[200])))
-              : null,
-          child: Row(
-            children: <Widget>[
-              Container(
-                child: IconButton(
-                  icon: Icon(
-                    Icons.info,
-                    color: Colors.greenAccent,
-                    size: 30.0,
-                  ),
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Creditos()));
-                  },
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 120.0),
-              ),
-              Container(
-                child: IconButton(
-                  icon: Icon(Icons.chat, color: Colors.greenAccent, size: 30.0),
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ChatMensagem()));
-                  },
-                ),
-              )
-            ],
-          ),
-        ),
+        drawer: MDrawer(),
       ),
     );
   }

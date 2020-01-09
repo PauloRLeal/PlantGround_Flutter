@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:plantground/menu_inicial.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -18,12 +19,11 @@ var _userId;
 var _userName;
 var _userPhotoUrl;
 
-_getDadosUser() async{
+_getDadosUser() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   _userId = prefs.getString('userId');
   _userName = prefs.getString('displayName');
   _userPhotoUrl = prefs.getString('photoUrl');
-
 }
 
 void _sendMessage({String text, String imgUrl}) {
@@ -52,7 +52,6 @@ void _sendMessage({String text, String imgUrl}) {
 }
 
 class ChatMensagem extends StatefulWidget {
-  ChatMensagem({Key key}) : super(key: key);
   @override
   _ChatMensagemState createState() => _ChatMensagemState();
 }
@@ -68,7 +67,16 @@ class _ChatMensagemState extends State<ChatMensagem> {
             child: Scaffold(
                 appBar: AppBar(
                   backgroundColor: Colors.greenAccent,
-                  title: Text("PlantGround"),
+                  title: Row(children: [
+                    IconButton(icon: Icon(Icons.arrow_back),onPressed: (){
+                      Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => MenuInicial()));
+                    },),
+                    Text(
+                      "Tira Dúvidas",
+                      style: TextStyle(fontSize: 24.0, color: Colors.white),
+                    ),
+                  ]),
                   centerTitle: true,
                   elevation: Theme.of(context).platform == TargetPlatform.iOS
                       ? 0.0
@@ -97,10 +105,9 @@ class _ChatMensagemState extends State<ChatMensagem> {
                                       null) {
                                     List r = snapshot.data.documents.reversed
                                         .toList();
-                                    if (r[index].data["senderId"] == _userId){
+                                    if (r[index].data["senderId"] == _userId) {
                                       return MessageUser(r[index].data);
-                                    }
-                                    else{
+                                    } else {
                                       return Message(r[index].data);
                                     }
                                   } else {

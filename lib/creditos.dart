@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:plantground/menu_inicial.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -23,7 +24,16 @@ class _CreditosState extends State<Creditos> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.greenAccent,
-          title: Text("Créditos"),
+          title: Row(children: [
+                    IconButton(icon: Icon(Icons.arrow_back),onPressed: (){
+                      Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => MenuInicial()));
+                    },),
+                    Text(
+                      "Tira Dúvidas",
+                      style: TextStyle(fontSize: 24.0, color: Colors.white),
+                    ),
+                  ]),
           centerTitle: true,
           elevation:
               Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
@@ -45,16 +55,16 @@ class _CreditosState extends State<Creditos> {
                       return ListView.builder(
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (context, index) {
-                          if (snapshot.data.documents[index].data != null) {
-                            return ButtonsClassificacao(
-                                snapshot.data.documents[index].data);
-                          } else {
-                            return Container(
-                                margin: EdgeInsets.only(top: 250.0),
-                                child: Center(
-                                  child: CircularProgressIndicator(),
-                                ));
-                          }
+                          if(snapshot.hasData){
+                            if(snapshot.data != null){
+                              return ButtonsClassificacao(
+                              snapshot.data.documents[index].data);
+                            }else{
+                              return Center(child: CircularProgressIndicator());
+                            }
+                          }else{
+                              return Center(child: CircularProgressIndicator());
+                            }
                         },
                       );
                   }

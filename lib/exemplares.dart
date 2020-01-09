@@ -27,7 +27,12 @@ class _Exemplares extends State<Exemplares> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.greenAccent,
-          title: Text(idCarac2),
+          title: Text(
+          idCarac2,
+          style: TextStyle(
+              fontSize: 24.0,
+              color: Colors.white),
+        ),
           centerTitle: true,
           elevation:
               Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
@@ -49,8 +54,16 @@ class _Exemplares extends State<Exemplares> {
                       return ListView.builder(
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (context, index) {
-                          return TextCaracteristicas(
+                          if(snapshot.hasData){
+                            if(snapshot.data != null){
+                              return TextCaracteristicas(
                               snapshot.data.documents[index].data, idCarac2);
+                            }else{
+                              return Center(child: CircularProgressIndicator());
+                            }
+                          }else{
+                              return Center(child: CircularProgressIndicator());
+                            }
                         },
                       );
                   }
