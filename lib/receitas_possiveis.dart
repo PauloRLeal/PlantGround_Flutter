@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:plantground/receita.dart';
+import 'package:PlantGround/receita.dart';
 
 void main() {
   runApp(MaterialApp(
-    title: 'Possiveis Receitas',
+    title: "PlantGround",
     debugShowCheckedModeBanner: false,
   ));
 }
+
+var _check = false;
 
 class PossiveisReceitas extends StatefulWidget {
   final idCarac;
@@ -20,12 +22,18 @@ class _PossiveisReceitas extends State<PossiveisReceitas> {
   final idCarac2;
   _PossiveisReceitas(this.idCarac2);
   @override
+  @override
+  void initState() { 
+    super.initState();
+    _check = false;
+  }
   Widget build(BuildContext context) {
     return SafeArea(
       bottom: false,
       top: false,
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.greenAccent,
           title: Text(
           idCarac2,
           style: TextStyle(
@@ -56,14 +64,19 @@ class _PossiveisReceitas extends State<PossiveisReceitas> {
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (context, index) {
                           if(snapshot.hasData){
-                            if(snapshot.data != null){
+                            if(snapshot.data.documents[index].data["nome$idCarac2"] != null && snapshot.data.documents[index].data["img$idCarac2"] != null){
+                              _check = true;
                               return TextReceitasPossiveis(
                               snapshot.data.documents[index].data, idCarac2);
                             }else{
-                              return Center(child: CircularProgressIndicator());
+                              if(_check == false){
+                                _check = true;
+                              return Center(child: Text("Sem resposta do servidor no momento.", style: TextStyle(fontSize: 24, color: Colors.black),));}else{
+                                return Center();
+                              }
                             }
                           }else{
-                              return Center(child: CircularProgressIndicator());
+                              return Center(child: Text("Sem resposta do servidor no momento.", style: TextStyle(fontSize: 24, color: Colors.black),));
                             }
                         },
                       );
@@ -87,28 +100,58 @@ class TextReceitasPossiveis extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: const EdgeInsets.only(top: 60.0, left: 7.5, right: 7.5),
-        child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                    FlatButton(
-                        onPressed: () {
-                          var _nome = data["nome$idCarac3"];
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Receita(_nome)));
-                        },
-                        child: Text(
-                          data["nome$idCarac3"],
-                          style: TextStyle(
-                              fontSize: 24.0, fontWeight: FontWeight.bold),
-                        ))
-                  ]))
-            ]));
+      margin: const EdgeInsets.only(top: 4),
+      child: FlatButton(
+          onPressed: (){
+            Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Receita(idCarac3)));
+          },
+          child: SizedBox(
+            height: 150,
+            child: Stack(
+              alignment: Alignment.centerLeft,
+              children: <Widget>[
+                Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(data["img$idCarac3"])
+                    )
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.centerRight,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: <Color>[
+                        Colors.white.withAlpha(0),
+                        Colors.white38,
+                        Colors.white
+                      ],
+                    ),
+                  ),
+                  child: Container(
+                    margin: EdgeInsets.only(right: 10),
+                    child: Text(
+                      data["nome$idCarac3"] != null ? data["nome$idCarac3"] : "",
+                      style:
+                          TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.black),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 5,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.green
+                    ),
+                  ),
+                )
+              ],
+            ),
+          )),
+    );
   }
 }

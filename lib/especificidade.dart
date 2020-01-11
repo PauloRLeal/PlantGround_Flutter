@@ -3,10 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
   runApp(MaterialApp(
-    title: 'Especificidade',
+    title: "PlantGround",
     debugShowCheckedModeBanner: false,
   ));
 }
+
+var _check = false;
 
 class Especificidade extends StatefulWidget {
   final idCarac;
@@ -20,6 +22,11 @@ class _EspecificidadeState extends State<Especificidade> {
   final idCarac2;
   _EspecificidadeState(this.idCarac2);
   @override
+  @override
+  void initState() { 
+    super.initState();
+    _check = false;
+  }
   Widget build(BuildContext context) {
     return SafeArea(
       bottom: false,
@@ -57,14 +64,19 @@ class _EspecificidadeState extends State<Especificidade> {
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (context, index) {
                           if(snapshot.hasData){
-                            if(snapshot.data != null){
+                            if(snapshot.data.documents[index].data["text$idCarac2"] != null){
+                              _check = true;
                               return TextEspecificidade(
                               snapshot.data.documents[index].data, idCarac2);
                             }else{
-                              return Center(child: CircularProgressIndicator());
+                              if(_check == false){
+                                _check = true;
+                              return Center(child: Text("Sem resposta do servidor no momento.", style: TextStyle(fontSize: 24, color: Colors.black),));}else{
+                                return Center();
+                              }
                             }
                           }else{
-                              return Center(child: CircularProgressIndicator());
+                              return Center(child: Text("Sem resposta do servidor no momento.", style: TextStyle(fontSize: 24, color: Colors.black),));
                             }
                         },
                       );
@@ -97,7 +109,7 @@ class TextEspecificidade extends StatelessWidget {
             Container(
               margin: const EdgeInsets.symmetric(vertical: 50.0, horizontal: 10.0),
               child: CircleAvatar(
-                backgroundImage: NetworkImage(data["img$idCarac3"]),
+                backgroundImage: data["img$idCarac3"] != null ? NetworkImage(data["img$idCarac3"]) : Icon(Icons.autorenew),
                 minRadius: 150.0,
               ),
             ),
@@ -107,7 +119,7 @@ class TextEspecificidade extends StatelessWidget {
       Container(
         margin: EdgeInsets.symmetric(horizontal: 15.0),
         child: Text(
-      data["text$idCarac3"],
+      data["text$idCarac3"] != null ? data["text$idCarac3"] : "Sem resposta do servidor no momento.",
       textAlign: TextAlign.center,
       style: TextStyle(fontSize: 24.0, color: Colors.black),
     ))

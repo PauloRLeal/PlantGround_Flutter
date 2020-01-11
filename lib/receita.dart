@@ -3,10 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
   runApp(MaterialApp(
-    title: 'Receita',
+    title: "PlantGround",
     debugShowCheckedModeBanner: false,
   ));
 }
+
+var _check = false;
 
 class Receita extends StatefulWidget {
   final idCarac;
@@ -19,6 +21,13 @@ class _Receita extends State<Receita> {
   final idCarac2;
   _Receita(this.idCarac2);
   @override
+
+  @override
+  void initState() { 
+    super.initState();
+    _check = false;
+  }
+
   Widget build(BuildContext context) {
     return SafeArea(
       bottom: false,
@@ -54,14 +63,19 @@ class _Receita extends State<Receita> {
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (context, index) {
                           if(snapshot.hasData){
-                            if(snapshot.data != null){
+                            if(snapshot.data.documents[index].data["text$idCarac2"] != null){
+                              _check = true;
                               return TextReceita(
                               snapshot.data.documents[index].data, idCarac2);
                             }else{
-                              return Center(child: CircularProgressIndicator());
+                              if(_check == false){
+                                _check = true;
+                              return Center();}else{
+                                return Center();
+                              }
                             }
                           }else{
-                              return Center(child: CircularProgressIndicator());
+                              return Center(child: Text("Sem resposta do servidor no momento.", style: TextStyle(fontSize: 24, color: Colors.black),));
                             }
                         },
                       );
@@ -92,7 +106,7 @@ class TextReceita extends StatelessWidget {
             Container(
               margin: const EdgeInsets.symmetric(vertical: 50.0, horizontal: 10.0),
               child: CircleAvatar(
-                backgroundImage: NetworkImage(data["img$idCarac3"]),
+                backgroundImage: data["img$idCarac3"] != null ? NetworkImage(data["img$idCarac3"]) : NetworkImage("https://repository-images.githubusercontent.com/205373971/def40d80-cb4c-11e9-971a-7434089990ed"),
                 minRadius: 150.0,
               ),
             ),
@@ -102,9 +116,12 @@ class TextReceita extends StatelessWidget {
       Container(
         margin: EdgeInsets.symmetric(horizontal: 15.0),
         child: Text(
-      data["text$idCarac3"],
+      data["text$idCarac3"] != null ? data["text$idCarac3"]["title"] + "\n\n" + data["text$idCarac3"]["ingredientes"] + "\n\n" + data["text$idCarac3"]["preparo"]: "Sem resposta do servidor no momento",
       textAlign: TextAlign.center,
       style: TextStyle(fontSize: 24.0, color: Colors.black),
-    ))],);
+    )),
+    SizedBox(
+      height: 30,
+    ), ],);
   }
 }

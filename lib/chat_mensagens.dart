@@ -5,15 +5,17 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:plantground/menu_inicial.dart';
+import 'package:PlantGround/menu_inicial.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MaterialApp(
-    title: 'Chat Mensagens',
+    title: "PlantGround",
     debugShowCheckedModeBanner: false,
   ));
 }
+
+var _check = false;
 
 var _userId;
 var _userName;
@@ -60,6 +62,11 @@ class _ChatMensagemState extends State<ChatMensagem> {
   @override
   Widget build(BuildContext context) {
     _getDadosUser();
+    @override
+    void initState() { 
+      super.initState();
+      _check = false;
+    }
     return Container(
         child: SafeArea(
             bottom: false,
@@ -67,15 +74,21 @@ class _ChatMensagemState extends State<ChatMensagem> {
             child: Scaffold(
                 appBar: AppBar(
                   backgroundColor: Colors.greenAccent,
-                  title: Row(children: [
-                    IconButton(icon: Icon(Icons.arrow_back),onPressed: (){
-                      Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => MenuInicial()));
-                    },),
-                    Text(
-                      "Tira Dúvidas",
-                      style: TextStyle(fontSize: 24.0, color: Colors.white),
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                    Container(
+                      child: IconButton(icon: Icon(Icons.arrow_back),onPressed: (){
+                        Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => MenuInicial()));
+                      },),
                     ),
+                    Expanded(child:Center(
+                      child: Text(
+                        "Tira Dúvidas",
+                        style: TextStyle(fontSize: 24.0, color: Colors.white),
+                      ),
+                    )),
                   ]),
                   centerTitle: true,
                   elevation: Theme.of(context).platform == TargetPlatform.iOS
@@ -101,8 +114,9 @@ class _ChatMensagemState extends State<ChatMensagem> {
                                 reverse: true,
                                 itemCount: snapshot.data.documents.length,
                                 itemBuilder: (context, index) {
-                                  if (snapshot.data.documents[index].data !=
+                                  if (snapshot.data.documents[index].data["senderName"] !=
                                       null) {
+                                        _check = true;
                                     List r = snapshot.data.documents.reversed
                                         .toList();
                                     if (r[index].data["senderId"] == _userId) {
@@ -111,7 +125,11 @@ class _ChatMensagemState extends State<ChatMensagem> {
                                       return Message(r[index].data);
                                     }
                                   } else {
-                                    return CircularProgressIndicator();
+                                    if(_check == false){
+                                      _check = true;
+                                    return Center(child: Text("Sem resposta do servidor no momento.", style: TextStyle(fontSize: 24, color: Colors.black),));}else{
+                                      return Center();
+                                    }
                                   }
                                 },
                               );

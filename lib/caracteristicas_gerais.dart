@@ -3,10 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
   runApp(MaterialApp(
-    title: 'Caracteristicas gerais',
+    title: "PlantGround",
     debugShowCheckedModeBanner: false,
   ));
 }
+
+var _check = false;
 
 class CaracteristicasGerais extends StatefulWidget {
   final idCarac;
@@ -20,6 +22,12 @@ class _CaracteristicasGeraisState extends State<CaracteristicasGerais> {
   final idCarac2;
   _CaracteristicasGeraisState(this.idCarac2);
   @override
+  @override
+  void initState() {
+    super.initState();
+    _check = false;
+  }
+
   Widget build(BuildContext context) {
     return SafeArea(
       bottom: false,
@@ -28,11 +36,9 @@ class _CaracteristicasGeraisState extends State<CaracteristicasGerais> {
         appBar: AppBar(
           backgroundColor: Colors.greenAccent,
           title: Text(
-          idCarac2,
-          style: TextStyle(
-              fontSize: 24.0,
-              color: Colors.white),
-        ),
+            idCarac2,
+            style: TextStyle(fontSize: 24.0, color: Colors.white),
+          ),
           centerTitle: true,
           elevation:
               Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
@@ -56,16 +62,35 @@ class _CaracteristicasGeraisState extends State<CaracteristicasGerais> {
                       return ListView.builder(
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (context, index) {
-                          if(snapshot.hasData){
-                            if(snapshot.data != null){
+                          if (snapshot.hasData) {
+                            if (snapshot.data.documents[index]
+                                    .data["text$idCarac2"] !=
+                                null) {
+                                  _check = true;
                               return TextCaracteristicasGerais(
-                              snapshot.data.documents[index].data, idCarac2);
-                            }else{
-                              return Center(child: CircularProgressIndicator());
+                                  snapshot.data.documents[index].data,
+                                  idCarac2);
+                            } else {
+                              if (_check == false) {
+                                _check = true;
+                                return Center(
+                                    child: Text(
+                                  "Sem resposta do servidor no momento.",
+                                  style: TextStyle(
+                                      fontSize: 24, color: Colors.black),
+                                ));
+                              }else{
+                                return Center();
+                              }
                             }
-                          }else{
-                              return Center(child: CircularProgressIndicator());
-                            }
+                          } else {
+                            return Center(
+                                child: Text(
+                              "Sem resposta do servidor no momento.",
+                              style:
+                                  TextStyle(fontSize: 24, color: Colors.black),
+                            ));
+                          }
                         },
                       );
                   }
@@ -98,7 +123,9 @@ class TextCaracteristicasGerais extends StatelessWidget {
               margin:
                   const EdgeInsets.symmetric(vertical: 50.0, horizontal: 10.0),
               child: CircleAvatar(
-                backgroundImage: NetworkImage(data["img$idCarac3"]),
+                backgroundImage: data["img$idCarac3"] != null
+                    ? NetworkImage(data["img$idCarac3"])
+                    : Icon(Icons.autorenew),
                 minRadius: 150.0,
               ),
             ),
@@ -108,10 +135,15 @@ class TextCaracteristicasGerais extends StatelessWidget {
       Container(
           margin: EdgeInsets.symmetric(horizontal: 15.0),
           child: Text(
-            data["text$idCarac3"],
+            data["text$idCarac3"] != null
+                ? data["text$idCarac3"]
+                : "Sem resposta do servidor.",
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 24.0, color: Colors.black),
-          ))
+          )),
+          SizedBox(
+            height: 20,
+          )
     ]));
   }
 }

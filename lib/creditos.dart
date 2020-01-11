@@ -1,14 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:plantground/menu_inicial.dart';
+import 'package:PlantGround/menu_inicial.dart';
 
 void main() {
   runApp(MaterialApp(
-    title: 'Créditos',
+    title: "PlantGround",
     debugShowCheckedModeBanner: false,
     home: Creditos(),
   ));
 }
+
+var _check = false;
 
 class Creditos extends StatefulWidget {
   @override
@@ -17,6 +19,11 @@ class Creditos extends StatefulWidget {
 
 class _CreditosState extends State<Creditos> {
   @override
+  @override
+  void initState() { 
+    super.initState();
+    _check = false;
+  }
   Widget build(BuildContext context) {
     return SafeArea(
       bottom: false,
@@ -24,15 +31,19 @@ class _CreditosState extends State<Creditos> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.greenAccent,
-          title: Row(children: [
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
                     IconButton(icon: Icon(Icons.arrow_back),onPressed: (){
                       Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (context) => MenuInicial()));
                     },),
-                    Text(
-                      "Tira Dúvidas",
-                      style: TextStyle(fontSize: 24.0, color: Colors.white),
-                    ),
+                    Expanded(child:Center(
+                      child: Text(
+                        "Sobre o PlantGround",
+                        style: TextStyle(fontSize: 24.0, color: Colors.white),
+                      ),
+                    )),
                   ]),
           centerTitle: true,
           elevation:
@@ -56,14 +67,19 @@ class _CreditosState extends State<Creditos> {
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (context, index) {
                           if(snapshot.hasData){
-                            if(snapshot.data != null){
+                            if(snapshot.data.documents[index].data["text"] != null){
+                              _check = true;
                               return ButtonsClassificacao(
                               snapshot.data.documents[index].data);
                             }else{
-                              return Center(child: CircularProgressIndicator());
+                              if(_check == false){
+                                _check = true;
+                              return Center(child: Text("Sem resposta do servidor no momento.", style: TextStyle(fontSize: 24, color: Colors.black),));}else{
+                                return Center();
+                              }
                             }
                           }else{
-                              return Center(child: CircularProgressIndicator());
+                              return Center(child: Text("Sem resposta do servidor no momento.", style: TextStyle(fontSize: 24, color: Colors.black),));
                             }
                         },
                       );
@@ -96,7 +112,7 @@ class ButtonsClassificacao extends StatelessWidget {
               margin:
                   const EdgeInsets.symmetric(vertical: 50.0, horizontal: 10.0),
               child: CircleAvatar(
-                backgroundImage: NetworkImage(data["img"]),
+                backgroundImage: data["img"] != null ? NetworkImage(data["img"]) : Icon(Icons.autorenew),
                 minRadius: 75.0,
               ),
             ),
@@ -106,7 +122,7 @@ class ButtonsClassificacao extends StatelessWidget {
       Container(
           margin: EdgeInsets.only(top: 30.0),
           child: Text(
-            data["text"],
+            data["text"] != null ? data["text"] : "Sem resposta do servidor no momento.",
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 24.0, color: Colors.black),
           )),
