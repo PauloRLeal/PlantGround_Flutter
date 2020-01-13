@@ -43,7 +43,7 @@ class MDrawer extends StatelessWidget {
                     maxRadius: 40,
                     backgroundImage: _userPhotoUrl != null ? NetworkImage(_userPhotoUrl) : null,
                   ),
-                  Container(margin: EdgeInsets.only(top: 5),child:Text(_userName != null ? _userName : "", style: TextStyle(fontSize: 14, color: Colors.white),)),
+                  Container(margin: EdgeInsets.only(top: 5),child:Text(_userName != null ? _userName : "", style: TextStyle(fontSize: 15.5, color: Colors.white),)),
                   Container(margin: EdgeInsets.only(top: 5),child:Text(_userEmail != null ? _userEmail : "", style: TextStyle(fontSize: 17, color: Colors.white),))
                 ],
               ),
@@ -102,13 +102,30 @@ class MDrawer extends StatelessWidget {
                     margin: EdgeInsets.only(
                       right: 15.0,
                     )),
-                Text("Sing Out", style: TextStyle(fontSize: 16, color: Colors.greenAccent),)
+                Text("Trocar de conta", style: TextStyle(fontSize: 16, color: Colors.greenAccent),)
               ],
             ),
             onTap: () {
               _signOutGoogle();
               SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-              
+            },
+          ),
+          ListTile(
+            title: Row(
+              children: <Widget>[
+                Container(
+                    child: Icon(
+                      Icons.exit_to_app,
+                      color: Colors.greenAccent,
+                    ),
+                    margin: EdgeInsets.only(
+                      right: 15.0,
+                    )),
+                Text("Sair", style: TextStyle(fontSize: 16, color: Colors.greenAccent),)
+              ],
+            ),
+            onTap: () {
+              SystemChannels.platform.invokeMethod('SystemNavigator.pop');
             },
           ),
         ],

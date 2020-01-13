@@ -71,11 +71,13 @@ class _EspecificidadeState extends State<Especificidade> {
                             }else{
                               if(_check == false){
                                 _check = true;
-                              return Center(child: Text("Sem resposta do servidor no momento.", style: TextStyle(fontSize: 24, color: Colors.black),));}else{
+                              return Center();}else{
+                                _check = true;
                                 return Center();
                               }
                             }
                           }else{
+                            _check = true;
                               return Center(child: Text("Sem resposta do servidor no momento.", style: TextStyle(fontSize: 24, color: Colors.black),));
                             }
                         },
@@ -122,7 +124,10 @@ class TextEspecificidade extends StatelessWidget {
       data["text$idCarac3"] != null ? data["text$idCarac3"] : "Sem resposta do servidor no momento.",
       textAlign: TextAlign.center,
       style: TextStyle(fontSize: 24.0, color: Colors.black),
-    ))
+    )),
+    SizedBox(
+            height: 20,
+          )
     ]));
   }
 }

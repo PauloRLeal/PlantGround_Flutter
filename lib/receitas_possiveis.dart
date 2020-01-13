@@ -69,13 +69,15 @@ class _PossiveisReceitas extends State<PossiveisReceitas> {
                               return TextReceitasPossiveis(
                               snapshot.data.documents[index].data, idCarac2);
                             }else{
-                              if(_check == false){
+                              if(_check == false && idCarac2 == "Briófitas"){
                                 _check = true;
-                              return Center(child: Text("Sem resposta do servidor no momento.", style: TextStyle(fontSize: 24, color: Colors.black),));}else{
+                              return Center(child: Text("Sem resposta do servidor no momento.", style: TextStyle(fontSize: 24, color: Colors.black),),);}else{
+                                _check = true;
                                 return Center();
                               }
                             }
                           }else{
+                            _check = true;
                               return Center(child: Text("Sem resposta do servidor no momento.", style: TextStyle(fontSize: 24, color: Colors.black),));
                             }
                         },
@@ -104,7 +106,7 @@ class TextReceitasPossiveis extends StatelessWidget {
       child: FlatButton(
           onPressed: (){
             Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Receita(idCarac3)));
+          context, MaterialPageRoute(builder: (context) => Receita(data["nome$idCarac3"])));
           },
           child: SizedBox(
             height: 150,
@@ -136,6 +138,7 @@ class TextReceitasPossiveis extends StatelessWidget {
                     margin: EdgeInsets.only(right: 10),
                     child: Text(
                       data["nome$idCarac3"] != null ? data["nome$idCarac3"] : "",
+                      textAlign: TextAlign.right,
                       style:
                           TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.black),
                     ),

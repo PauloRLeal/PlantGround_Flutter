@@ -73,17 +73,14 @@ class _Exemplares extends State<Exemplares> {
                             } else {
                               if (_check == false) {
                                 _check = true;
-                                return Center(
-                                    child: Text(
-                                  "Sem resposta do servidor no momento.",
-                                  style: TextStyle(
-                                      fontSize: 24, color: Colors.black),
-                                ));
+                                return Center();
                               }else{
+                                _check = true;
                                 return Center();
                               }
                             }
                           } else {
+                            _check = true;
                             return Center(
                                 child: Text(
                               "Sem resposta do servidor no momento.",
@@ -117,7 +114,7 @@ class TextCaracteristicas extends StatelessWidget {
       child: FlatButton(
         onPressed: (){
           Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Especificidade(idCarac3)));
+          context, MaterialPageRoute(builder: (context) => Especificidade(data["nome$idCarac3"])));
         },
           child: SizedBox(
             height: 150,

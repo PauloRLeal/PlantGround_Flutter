@@ -36,7 +36,7 @@ void _sendMessage({String text, String imgUrl}) {
     snapshot.documents.forEach((f) {
       Firestore.instance
           .collection("mensagens")
-          .document(f.data["numero"].toString())
+          .document(f.data["numero"].toString() + _userName)
           .setData({
         "text": text,
         "imgUrl": imgUrl,
@@ -121,7 +121,10 @@ class _ChatMensagemState extends State<ChatMensagem> {
                                         .toList();
                                     if (r[index].data["senderId"] == _userId) {
                                       return MessageUser(r[index].data);
-                                    } else {
+                                    } else if(r[index].data["senderId"] == "116843101664121232458$_userName") {
+                                      return Message(r[index].data);
+                                    }
+                                    else{
                                       return Message(r[index].data);
                                     }
                                   } else {

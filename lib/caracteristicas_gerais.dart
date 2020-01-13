@@ -73,12 +73,7 @@ class _CaracteristicasGeraisState extends State<CaracteristicasGerais> {
                             } else {
                               if (_check == false) {
                                 _check = true;
-                                return Center(
-                                    child: Text(
-                                  "Sem resposta do servidor no momento.",
-                                  style: TextStyle(
-                                      fontSize: 24, color: Colors.black),
-                                ));
+                                return Center();
                               }else{
                                 return Center();
                               }

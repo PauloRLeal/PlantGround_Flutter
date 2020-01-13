@@ -17,7 +17,7 @@ final googleSignIn = GoogleSignIn();
 final auth = FirebaseAuth.instance;
 var _currentUser;
 
-Future<GoogleSignInAccount> _ensureLoggedIn() async {
+Future<GoogleSignInAccount> ensureLoggedIn() async {
   GoogleSignInAccount user = googleSignIn.currentUser;
   _currentUser = user;
   if (user == null) {
@@ -44,22 +44,20 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-
+@override
 @override
   void initState() {
     super.initState();
-    _ensureLoggedIn().then((user){
+    ensureLoggedIn().then((user){
       if(user != null){
-        _salvarDadosUser();
+        print(user);
+        salvarDadosUser();
         getDadosUser();
          Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (context) => MenuInicial()));
       }
     });
   }
-
-  
-
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +66,7 @@ class _LoginState extends State<Login> {
     );
   }
 }
-_salvarDadosUser() async{
+salvarDadosUser() async{
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.setString('userId', _currentUser.id);
   await prefs.setString('displayName', _currentUser.displayName);
