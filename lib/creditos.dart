@@ -113,17 +113,17 @@ class ButtonsClassificacao extends StatelessWidget {
                   const EdgeInsets.symmetric(vertical: 50.0, horizontal: 10.0),
               child: CircleAvatar(
                 backgroundImage: data["img"] != null ? NetworkImage(data["img"]) : Icon(Icons.autorenew),
-                minRadius: 75.0,
+                minRadius: 85.0,
               ),
             ),
           ],
         ),
       ),
       Container(
-          margin: EdgeInsets.only(top: 30.0),
+          margin: EdgeInsets.only(left: 30, right: 30),
           child: Text(
             data["text"] != null ? data["text"] : "Sem resposta do servidor no momento.",
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.justify,
             style: TextStyle(fontSize: 24.0, color: Colors.black),
           )),
       Padding(

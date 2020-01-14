@@ -63,10 +63,11 @@ class _ChatMensagemState extends State<ChatMensagem> {
   Widget build(BuildContext context) {
     _getDadosUser();
     @override
-    void initState() { 
+    void initState() {
       super.initState();
       _check = false;
     }
+
     return Container(
         child: SafeArea(
             bottom: false,
@@ -75,21 +76,28 @@ class _ChatMensagemState extends State<ChatMensagem> {
                 appBar: AppBar(
                   backgroundColor: Colors.greenAccent,
                   title: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                    Container(
-                      child: IconButton(icon: Icon(Icons.arrow_back),onPressed: (){
-                        Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => MenuInicial()));
-                      },),
-                    ),
-                    Expanded(child:Center(
-                      child: Text(
-                        "Tira Dúvidas",
-                        style: TextStyle(fontSize: 24.0, color: Colors.white),
-                      ),
-                    )),
-                  ]),
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          child: IconButton(
+                            icon: Icon(Icons.arrow_back),
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MenuInicial()));
+                            },
+                          ),
+                        ),
+                        Expanded(
+                            child: Center(
+                          child: Text(
+                            "Tira Dúvidas",
+                            style:
+                                TextStyle(fontSize: 24.0, color: Colors.white),
+                          ),
+                        )),
+                      ]),
                   centerTitle: true,
                   elevation: Theme.of(context).platform == TargetPlatform.iOS
                       ? 0.0
@@ -114,23 +122,31 @@ class _ChatMensagemState extends State<ChatMensagem> {
                                 reverse: true,
                                 itemCount: snapshot.data.documents.length,
                                 itemBuilder: (context, index) {
-                                  if (snapshot.data.documents[index].data["senderName"] !=
+                                  if (snapshot.data.documents[index]
+                                          .data["senderName"] !=
                                       null) {
-                                        _check = true;
+                                    _check = true;
                                     List r = snapshot.data.documents.reversed
                                         .toList();
                                     if (r[index].data["senderId"] == _userId) {
                                       return MessageUser(r[index].data);
-                                    } else if(r[index].data["senderId"] == "116843101664121232458$_userName") {
+                                    }else if (r[index].data["senderId"] ==
+                                        "PlantGround$_userName" || r[index].data["senderId"] ==
+                                        "PlantGround") {
                                       return Message(r[index].data);
-                                    }
-                                    else{
-                                      return Message(r[index].data);
+                                    }else{
+                                      return Center();
                                     }
                                   } else {
-                                    if(_check == false){
+                                    if (_check == false) {
                                       _check = true;
-                                    return Center(child: Text("Sem resposta do servidor no momento.", style: TextStyle(fontSize: 24, color: Colors.black),));}else{
+                                      return Center(
+                                          child: Text(
+                                        "Sem resposta do servidor no momento.",
+                                        style: TextStyle(
+                                            fontSize: 24, color: Colors.black),
+                                      ));
+                                    } else {
                                       return Center();
                                     }
                                   }
@@ -269,10 +285,14 @@ class Message extends StatelessWidget {
                   Text(data["senderName"],
                       style: Theme.of(context).textTheme.subhead),
                   Container(
-                      margin: const EdgeInsets.only(top: 5.0),
+                      color: Colors.greenAccent.withAlpha(40),
+                      margin: const EdgeInsets.only(top: 5.0, right: 60),
                       child: data["imgUrl"] != null
                           ? Image.network(data["imgUrl"], width: 250.0)
-                          : Text(data["text"]))
+                          : Text(
+                              data["text"],
+                              textAlign: TextAlign.justify,
+                            ))
                 ],
               ),
             )
@@ -303,7 +323,8 @@ class MessageUser extends StatelessWidget {
                 Text(data["senderName"],
                     style: Theme.of(context).textTheme.subhead),
                 Container(
-                    margin: const EdgeInsets.only(top: 5.0),
+                    color: Colors.yellowAccent.withAlpha(30),
+                    margin: const EdgeInsets.only(top: 5.0, left: 60),
                     child: data["imgUrl"] != null
                         ? Image.network(data["imgUrl"], width: 250.0)
                         : Text(data["text"]))

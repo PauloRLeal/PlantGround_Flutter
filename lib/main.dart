@@ -50,7 +50,6 @@ class _LoginState extends State<Login> {
     super.initState();
     ensureLoggedIn().then((user){
       if(user != null){
-        print(user);
         salvarDadosUser();
         getDadosUser();
          Navigator.pushReplacement(context,

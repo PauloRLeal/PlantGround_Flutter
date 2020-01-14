@@ -114,10 +114,10 @@ class TextReceita extends StatelessWidget {
         ),
       ),
       Container(
-        margin: EdgeInsets.symmetric(horizontal: 15.0),
+        margin: EdgeInsets.symmetric(horizontal: 30.0),
         child: Text(
       data["text$idCarac3"] != null ? data["text$idCarac3"]["title"] + "\n\n" + data["text$idCarac3"]["ingredientes"] + "\n\n" + data["text$idCarac3"]["preparo"]: "Sem resposta do servidor no momento",
-      textAlign: TextAlign.center,
+      textAlign: TextAlign.justify,
       style: TextStyle(fontSize: 24.0, color: Colors.black),
     )),
     SizedBox(
